@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from llm_processing import LLMProcessor, process_text_with_llm
 from text_analysis import analyze_text
@@ -62,3 +64,4 @@ class TestLLMProcessing(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

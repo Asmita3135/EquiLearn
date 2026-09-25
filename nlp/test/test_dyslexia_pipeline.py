@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from dyslexia_pipeline import run_dyslexia_pipeline
 from llm_processing import LLMProcessor
@@ -65,3 +67,4 @@ class TestDyslexiaPipeline(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

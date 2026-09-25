@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from main_pipeline import run_member3_pipeline
 from input_integration import UnifiedInput, Member1Input, Member2Input, TimestampedSegment
@@ -77,3 +79,4 @@ class TestFinalIntegration(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
