@@ -1,0 +1,737 @@
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 1
+ EquiLearn
+ Product Requirements Document
+ Core AI/ML & Accessibility Intelligence
+Version
+1.0
+Scope
+Core AI/ML only
+Team
+3 Members
+Primary Goal
+Multimodal educational-content transformation for accessibility
+Scope note: Frontend, backend, APIs, database, authentication, deployment, website/app UI, and user-account
+management are deliberately postponed.
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 2
+1. Product Overview
+EquiLearn is a multimodal accessibility intelligence system that takes educational content in different formats and
+transforms it into representations suitable for users with different accessibility needs.
+
+PDFs
+
+Scanned documents
+
+Images
+
+Diagrams
+
+Charts
+
+Audio
+
+Video
+
+Raw text
+The system processes this content using multiple AI/ML models and produces accessibility-oriented outputs for:
+1
+Blind users
+2
+Deaf / Hard-of-Hearing users
+3
+Low-vision users
+4
+Users with dyslexia
+Core problem: How can the same educational material be automatically understood and transformed into different
+accessible representations without losing its meaning?
+ Input → Extraction → AI Understanding → Transformation → Accessibility Decision → Accessible
+Representation
+2. Scope
+2.1 In Scope
+
+Document processing
+
+Image processing
+
+OCR
+
+Computer vision
+
+Vision-Language Models
+
+Speech recognition
+
+Audio processing
+
+NLP
+
+LLM summarization
+
+LLM simplification
+
+Readability analysis
+
+Key-term extraction
+
+Alt-text generation
+
+Transcript generation
+
+Caption generation
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 3
+
+Text-to-Speech preparation
+
+Accessibility-specific transformations
+
+AI evaluation
+
+Error handling
+
+Model integration
+
+Core AI pipeline
+2.2 Out of Scope
+
+Frontend
+
+Backend
+
+APIs
+
+Database
+
+Authentication
+
+Deployment
+
+Website/app UI
+
+User-account management
+
+Production infrastructure
+3. Core Problem
+Educational content can contain several modalities simultaneously. A textbook PDF may contain normal text, scanned
+text, diagrams, images, charts, captions, and technical labels. A lecture may contain speech, video, slides, and visual
+explanations.
+Information
+Required For
+What text says
+Blind, low-vision, dyslexia
+What images depict
+Blind, low-vision
+What audio contains
+Deaf/Hard-of-Hearing
+What text means and how complex it is
+Dyslexia, low-vision
+4. Core System Objective
+The system must transform heterogeneous learning material into a structured accessibility package.
+ raw_text
+alt_text
+transcript
+summary
+complexity_score
+key_terms
+reading_time
+recommended_representations
+5. Core AI/ML Architecture
+ RAW INPUT
+(PDF / Image / Audio / Video / Text)
+↓
+DATA PREPARATION
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 4
+↓
+MODALITY ROUTING
+↓
+AI/ML MODELS
+↓
+INFORMATION EXTRACTION
+↓
+CONTENT UNDERSTANDING
+↓
+TRANSFORMATION
+↓
+ACCESSIBILITY DECISION
+↓
+FINAL ACCESSIBILITY REPRESENTATION
+The core system is not one single AI model. It is a routing graph in which different models handle different modalities.
+6. Stage-by-Stage Product Workflow
+STAGE 1 — INPUT ACQUISITION
+Input: PDF, image, audio, video, or text.
+Processing: Determine content type and extract raw components. This stage is basic file/format processing, not AI.
+Output: Raw bytes, decoded streams, text content, images, audio, video.
+STAGE 2 — DATA PREPARATION
+Images: resize, denoise, deskew, normalize.
+Audio: resample to 16 kHz mono, trim silence, normalize amplitude.
+Video: extract audio track and keyframes where required.
+Text: normalize Unicode, fix encoding, split into paragraphs.
+STAGE 3 — MODALITY ROUTING
+Digital PDF with usable text → direct text extraction.
+Scanned page/image → OCR.
+Speech → ASR/Whisper.
+Visual content → VLM.
+Text → NLP + LLM.
+STAGE 4 — AI/ML PROCESSING
+PaddleOCR for OCR; Tesseract as fallback; Qwen2.5-VL / GPT-4o-type VLM for visual understanding; Whisper
+large-v3 for speech recognition; GPT-4o / Gemini Flash / Llama for summarization and simplification; Web Speech API
+/ gTTS for text-to-speech.
+STAGE 5 — INFORMATION UNDERSTANDING
+Text: readability, sentence length, lexical density, passive voice, complexity, key terms.
+Images: objects, actions, spatial relationships, visual descriptions.
+Audio: transcript segments, timestamps, speaker changes, topic shifts.
+STAGE 6 — TRANSFORMATION
+Text → summarization, simplification, key-term extraction.
+Images → alt-text.
+Audio/video → transcript, timestamped captions, VTT.
+Text → speech-ready representation.
+STAGE 7 — ACCESSIBILITY INTELLIGENCE
+A rule-based decision layer selects the appropriate representation for the accessibility profile.
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 5
+STAGE 8 — FINAL ACCESSIBILITY PACKAGE
+All processed information is combined into a structured package containing raw text, alt-text, transcript, summary,
+complexity score, key terms, reading time, and recommended representations.
+7. Member-by-Member Workflow
+MEMBER 1 — Vision & Document AI
+Primary responsibility: Documents + Images + OCR + Visual Understanding
+M1-STAGE 1 — Document Processing
+Understand PDF types, implement digital-text extraction, identify when OCR is required, handle scanned pages, and
+convert pages into images when needed.
+M1-STAGE 2 — Image Preprocessing
+Resize, denoise, deskew, normalize, and prepare images for OCR/VLM processing.
+M1-STAGE 3 — OCR
+Primary: PaddleOCR. Fallback: Tesseract.
+Pipeline: Image → text detection → text recognition → bounding boxes → confidence.
+Output: Text, bounding boxes, confidence scores.
+M1-STAGE 4 — Vision-Language Model
+Use Qwen2.5-VL-3B-Instruct or an equivalent approved VLM to understand objects, scenes, diagrams, spatial
+relationships, and visual content. OCR tells what text is written; VLM helps explain what the whole visual means.
+M1-STAGE 5 — Alt-Text
+Image → VLM → description → alt-text. For complex diagrams, combine OCR labels with VLM visual relationships to
+form a structured description.
+M1-STAGE 6 — Blind User Support
+PDF → text + images → OCR + VLM → text labels + visual description → Member 3 language processing → unified
+description.
+M1-STAGE 7 — Low-Vision Support
+Provide OCR text, image descriptions, visual information, and important visual content. Presentation enhancement
+itself is outside this core AI PRD.
+M1-STAGE 8 — Evaluation
+OCR: CER, confidence, recognition failures. VLM: human description rating, plus BLEU/ROUGE where appropriate,
+and hallucination cases.
+Member 1 Final Deliverables
+
+PDF text-extraction workflow
+
+OCR module
+
+Tesseract fallback
+
+OCR confidence handling
+
+VLM image-understanding workflow
+
+Alt-text generation
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 6
+
+Diagram understanding
+
+Visual-information extraction
+
+OCR evaluation
+
+VLM evaluation
+MEMBER 2 — Audio & Speech AI
+Primary responsibility: Audio + Video Audio + Speech Recognition + Transcription + Caption Generation + TTS
+investigation
+M2-STAGE 1 — Audio Extraction
+For video: Video → FFmpeg → audio track. Then audio → 16 kHz → mono → silence trimming → Whisper-ready
+audio.
+M2-STAGE 2 — Automatic Speech Recognition
+Model: Whisper large-v3 / large-v3-turbo.
+Pipeline: audio → mel-spectrogram → transformer encoder/decoder → text tokens → timestamps.
+Output: transcript, segments, start/end timestamps, language.
+M2-STAGE 3 — Deaf/Hard-of-Hearing Workflow
+Lecture video → extract audio → preprocess → Whisper → speech-to-text → timestamped segments → VTT
+formatting → captions + transcript.
+M2-STAGE 4 — Transcript Processing
+Handle timestamp generation, segment creation, transcript formatting, speaker-change approximation, and technical
+terminology preservation.
+M2-STAGE 5 — VTT Generation
+Convert transcript + timestamps into WebVTT captions.
+M2-STAGE 6 — TTS
+Investigate Web Speech API and gTTS. Text → TTS → speech. TTS supports blind users, can be optional for
+low-vision users, and can assist dyslexia workflows.
+M2-STAGE 7 — Audio Evaluation
+Evaluate WER, timestamp accuracy, noisy audio, accented speech, incorrect transcription, and hallucinated speech.
+Member 2 Final Deliverables
+
+Audio preprocessing
+
+Video → audio extraction
+
+Whisper pipeline
+
+Transcript generation
+
+Timestamp generation
+
+VTT generation
+
+Deaf/HoH accessibility workflow
+
+TTS investigation/component
+
+ASR error handling
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 7
+
+WER evaluation
+MEMBER 3 — NLP & Accessibility Intelligence
+Primary responsibility: Text Understanding + LLM + Simplification + Summarization + Dyslexia + Accessibility
+Decision Logic
+M3-STAGE 1 — Text Processing
+Process text from digital PDFs, OCR, visual descriptions, and transcripts. Perform paragraph/sentence segmentation,
+Unicode normalization, and complexity analysis.
+M3-STAGE 2 — Readability Analysis
+Calculate Flesch Reading Ease, Flesch-Kincaid Grade Level, average sentence length, lexical density, and
+word-frequency bands.
+M3-STAGE 3 — Complexity Detection
+Determine whether content is difficult, identify difficult sentences/words, and identify information that must remain
+unchanged.
+M3-STAGE 4 — LLM Summarization
+Use an approved LLM such as GPT-4o, Gemini Flash, or Llama for important-information identification and condensed
+representations.
+M3-STAGE 5 — Dyslexia Simplification
+Original text → complexity analysis → LLM → simplification → readability check. If readability is insufficient, refine the
+prompt and run again, with a maximum of two refinement iterations.
+M3-STAGE 6 — What the LLM Changes
+Syntactic simplification, lexical simplification, passive-to-active conversion where appropriate, and clearer coreference.
+The requirement is to reduce linguistic complexity without losing important meaning.
+M3-STAGE 7 — Blind User Language Processing
+Combine OCR text + VLM visual description + context → LLM → unified meaningful description.
+M3-STAGE 8 — Accessibility Decision Logic
+User profile → deterministic decision table → required representation. This is rule-based, not ML.
+M3-STAGE 9 — Final Content Transformation
+Combine outputs into summary, simplified text, key terms, complexity score, unified visual descriptions, TTS-ready
+sentences, and simplified transcripts as required.
+M3-STAGE 10 — NLP/LLM Evaluation
+Summarization: ROUGE-L/BERTScore. Simplification: Flesch Reading Ease/FKGL/SARI. Human evaluation:
+semantic preservation, readability, hallucination.
+Member 3 Final Deliverables
+
+Text-processing pipeline
+
+Readability analyzer
+
+Complexity analysis
+
+Key-term extraction
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 8
+
+LLM summarization
+
+LLM simplification
+
+Iterative refinement
+
+Dyslexia pipeline
+
+Blind-user description merging
+
+Accessibility decision rules
+
+Final transformation logic
+
+NLP/LLM evaluation
+8. How the Three Members Connect
+ MEMBER 1
+PDF / Image
+↓
+OCR
+↓
+Text + Bounding Boxes
+Image
+↓
+VLM
+↓
+Visual Description
+↓
+MEMBER 3
+OCR Text + Visual Description + Context
+↓
+NLP / LLM
+↓
+Unified Description + Summary + Simplification + Key Terms
+MEMBER 2
+Audio / Video
+↓
+FFmpeg
+↓
+Whisper
+↓
+Transcript + Timestamps
+↓
+VTT
+↓
+MEMBER 3 (where language transformation is needed)
+Transcript
+↓
+NLP / LLM
+↓
+Simplified Transcript + Summary + Key Terms
+9. Shared Core
+ Component
+Owner
+Used By
+OCR
+Member 1
+Blind, Low Vision
+VLM
+Member 1
+Blind, Low Vision
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 9
+Component
+Owner
+Used By
+Whisper
+Member 2
+Deaf
+LLM
+Member 3
+Blind, Low Vision, Dyslexia
+TTS
+Member 2 / Shared
+Blind, Low Vision, Dyslexia
+Accessibility rules
+Member 3
+All profiles
+Shared modules should be implemented once and reused rather than duplicated.
+10. Accessibility-Specific Workflows
+10.1 Blind
+ PDF
+↓
+pypdf
+↓
+Text + Images
+↓
+OCR + VLM
+↓
+Text Labels + Visual Description
+↓
+LLM
+↓
+Unified Description
+↓
+TTS
+↓
+Audio Representation
+10.2 Deaf / Hard-of-Hearing
+ Video
+↓
+FFmpeg
+↓
+Audio
+↓
+Whisper
+↓
+Transcript + timestamps
+↓
+VTT
+↓
+Captions + transcript
+10.3 Low Vision
+ PDF / Image / Video
+↓
+OCR + VLM
+↓
+Text + Visual Description
+↓
+LLM
+↓
+Simplification + Summary
+↓
+Accessibility representation
+10.4 Dyslexia
+ Original Text
+↓
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 10
+Complexity Analysis
+↓
+LLM
+↓
+Simplification
+↓
+Readability Check
+↓
+Refinement if required
+↓
+Simplified Content
+↓
+TTS-ready Content
+11. Data and Training Requirements
+Hackathon implementation: No model training is required. The major models are pretrained. The work focuses on
+integration, validation, evaluation, and transformation logic.
+Task
+Model
+Training Required
+OCR
+PaddleOCR / Tesseract
+No
+Visual understanding
+Qwen2.5-VL
+No
+ASR
+Whisper
+No
+Summarization
+GPT-4o / Gemini / Llama
+No
+Simplification
+LLM
+No
+TTS
+Web Speech / gTTS
+No
+For validation/testing, the source plan proposes approximately 10 validation samples and 5 unseen test samples for
+major tasks.
+12. Evaluation Plan
+ Member
+Component
+Metric
+M1
+OCR
+CER
+M1
+VLM
+Human rating + BLEU/ROUGE
+M2
+ASR
+WER
+M2
+TTS
+Intelligibility / MOS
+M3
+Summarization
+ROUGE-L / BERTScore
+M3
+Simplification
+FRE / FKGL / SARI
+M3
+Accessibility transformation
+Human evaluation
+13. Failure Handling
+Member 1
+ OCR confidence < threshold
+↓
+Flag
+↓
+Tesseract fallback
+↓
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 11
+VLM fallback where appropriate
+Member 2
+ Low ASR confidence
+↓
+Flag uncertain segment
+↓
+Human review / fallback
+Member 3
+ LLM summary loses information
+↓
+Key-term comparison
+↓
+Extractive fallback
+Readability insufficient
+↓
+Refine prompt
+↓
+Run again
+14. Final Team Architecture
+ EDUCATIONAL CONTENT
+■
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+■ ■ ■
+▼ ▼ ▼
+DOCUMENT IMAGE AUDIO/VIDEO
+■ ■ ■
+■ ■ ▼
+■ ■ MEMBER 2
+■ ■ FFmpeg
+■ ■ ↓
+■ ■ Whisper
+■ ■ ↓
+■ ■ Transcript/VTT
+■ ■
+▼ ▼
+MEMBER 1
+pypdf / OCR
+PaddleOCR
+Tesseract
+VLM
+■
+■■■■■■■■■■■■■■■■■■■■■■■■■
+■ ■
+▼ ▼
+TEXT/DESCRIPTION TRANSCRIPT
+■ ■
+■■■■■■■■■■■■■■■■
+▼
+MEMBER 3
+NLP / LLM
+■
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+▼ ▼ ▼
+Summary Simplification Key Terms
+■ ■ ■
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+▼
+ACCESSIBILITY RULES
+■
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+▼ ▼ ▼
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 12
+BLIND DEAF LOW VISION
+■ ■ ■
+TTS Captions Simplified/
++ Alt-text + Transcript enhanced content
+■
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+▼
+DYSLEXIA
+■
+Simplified + TTS
+15. Member Ownership Summary
+ Member
+Owns
+Primary Profiles
+Member 1 — Vision & Document Intelligence
+PDF → document extraction → image preprocessing → OCR → VLM → alt-text → visual understanding
+Blind, Low Vision
+Member 2 — Audio & Speech Intelligence
+Audio → preprocessing → Whisper → transcript → timestamps → VTT → TTS
+Deaf/HoH; shared support for Blind, Low Vision, Dyslexia
+Member 3 — NLP & Accessibility Intelligence
+Text → NLP → complexity → LLM → summarization → simplification → key terms → accessibility decision
+Dyslexia; shared support for Blind, Low Vision, transcript transformation
+16. Definition of Done
+Member 1
+
+PDF/image content can be extracted
+
+OCR works
+
+OCR fallback exists
+
+VLM can describe selected images
+
+Alt-text is generated
+
+OCR/VLM outputs are evaluated
+Member 2
+
+Audio can be extracted
+
+Whisper produces transcripts
+
+Timestamps are generated
+
+VTT can be produced
+
+TTS workflow is available/investigated
+
+WER is measured
+Member 3
+
+Text complexity can be measured
+
+Summaries can be generated
+
+Text can be simplified
+
+Readability can be checked
+
+Simplification can be iteratively refined
+
+Key terms can be extracted
+
+Accessibility decision rules are implemented
+
+--- PAGE ---
+EquiLearn — Core AI/ML & Accessibility Intelligence PRD
+Page 13
+
+NLP/LLM outputs are evaluated
+Team
+
+M1 outputs can be consumed by M3
+
+M2 outputs can be consumed by M3 where required
+
+Shared LLM workflow works
+
+Shared TTS workflow works
+
+Four accessibility profiles can be demonstrated
+
+Evaluation results are documented
+
+Failure cases are handled
+17. Final Core AI Goal
+ ANY LEARNING MATERIAL
+↓
+CONTENT UNDERSTANDING
+↓
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+↓ ↓ ↓
+VISION SPEECH TEXT
+↓ ↓ ↓
+OCR/VLM WHISPER NLP/LLM
+■ ■ ■
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+↓
+CONTENT UNDERSTANDING
+↓
+TRANSFORMATION
+↓
+ACCESSIBILITY DECISION
+↓
+■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+↓ ↓ ↓ ↓
+BLIND DEAF LOW-VISION DYSLEXIA
+↓ ↓ ↓ ↓
+TTS VTT Enhanced Simplified
++ALT +TEXT +TTS +TTS
+Central principle: EquiLearn is not training one giant AI model. It combines pretrained multimodal models through a
+structured routing and transformation pipeline. The core intelligence is in how OCR, VLM, ASR, NLP/LLM, TTS, and
+deterministic accessibility rules work together.
