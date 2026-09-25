@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment / Virtualenv
+.venv/
+venv/
+ENV/
+env/
+
+# Temporary test directories & generated artifacts
+audio_speech/tests/temp_*/
+audio_speech/data/processed/*.wav
+!audio_speech/data/processed/.gitkeep
+audio_speech/data/output/*.vtt
+!audio_speech/data/output/.gitkeep
+audio_speech/data/raw/speech_sample.mp4
+!audio_speech/data/raw/.gitkeep
+
+# OS metadata
+.DS_Store
+Thumbs.db
