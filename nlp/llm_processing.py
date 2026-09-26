@@ -42,6 +42,24 @@ Complexity Level: {complexity}
 Key Terms to Preserve: {key_terms}
 """
 
+STRUCTURE_PROMPT = """
+Transform the following text into a dyslexia-friendly structure.
+Break long sentences, group by headings, extract bullet points, steps, definitions, and examples.
+Output VALID JSON ONLY matching this structure exactly (all fields required, use empty string/list/dict if none):
+{{
+    "title": "string",
+    "main_idea": "string",
+    "sections": [{{"heading": "string", "content": "string"}}],
+    "key_points": ["string"],
+    "steps": ["string"],
+    "definitions": {{"term": "definition"}},
+    "examples": ["string"]
+}}
+
+Text to structure:
+{text}
+"""
+
 class LLMProcessor:
     def __init__(self, provider_func: Callable[[str], str], model_config: str):
         """
@@ -66,6 +84,31 @@ class LLMProcessor:
             key_terms=", ".join(analysis.key_terms)
         )
         return self.provider_func(prompt)
+        
+    def structure_text(self, text: str) -> dict:
+        prompt = STRUCTURE_PROMPT.format(text=text)
+        response = self.provider_func(prompt)
+        
+        import json
+        try:
+            clean_resp = response.strip()
+            if clean_resp.startswith("```json"):
+                clean_resp = clean_resp[7:]
+            if clean_resp.endswith("```"):
+                clean_resp = clean_resp[:-3]
+            clean_resp = clean_resp.strip()
+            return json.loads(clean_resp)
+        except Exception:
+            # Fallback structure if parsing fails
+            return {
+                "title": "Structured Overview",
+                "main_idea": text[:100] + "..." if len(text) > 100 else text,
+                "sections": [{"heading": "Main Content", "content": text}],
+                "key_points": [text] if text else [],
+                "steps": [],
+                "definitions": {},
+                "examples": []
+            }
 
 def process_text_with_llm(text: str, processor: LLMProcessor) -> LLMResult:
     """

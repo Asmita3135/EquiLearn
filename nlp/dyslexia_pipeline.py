@@ -1,8 +1,18 @@
-from dataclasses import dataclass
-from typing import List, Optional
+from dataclasses import dataclass, field
+from typing import List, Dict, Optional
 from text_preprocessing import preprocess_text
 from text_analysis import analyze_text, TextAnalysisResult
 from llm_processing import LLMProcessor
+
+@dataclass
+class StructuredText:
+    title: str = ""
+    main_idea: str = ""
+    sections: List[Dict[str, str]] = field(default_factory=list)
+    key_points: List[str] = field(default_factory=list)
+    steps: List[str] = field(default_factory=list)
+    definitions: Dict[str, str] = field(default_factory=dict)
+    examples: List[str] = field(default_factory=list)
 
 @dataclass
 class DyslexiaPipelineResult:
@@ -10,6 +20,7 @@ class DyslexiaPipelineResult:
     original_analysis: TextAnalysisResult
     summary: Optional[str]
     simplified_text: str
+    structured_text: Optional[StructuredText]
     final_analysis: TextAnalysisResult
     difficult_terms: List[str]
     refinement_count: int
@@ -38,7 +49,7 @@ def run_dyslexia_pipeline(text: str, processor: LLMProcessor) -> DyslexiaPipelin
     preprocessed = preprocess_text(text)
     if not preprocessed.cleaned_text:
         empty_analysis = analyze_text("")
-        return DyslexiaPipelineResult("", empty_analysis, None, "", empty_analysis, [], 0, False, "Empty text provided.")
+        return DyslexiaPipelineResult("", empty_analysis, None, "", None, empty_analysis, [], 0, False, "Empty text provided.")
 
     original_text = preprocessed.cleaned_text
     original_analysis = analyze_text(original_text)
@@ -49,7 +60,7 @@ def run_dyslexia_pipeline(text: str, processor: LLMProcessor) -> DyslexiaPipelin
         current_simplified_text = processor.simplify(original_text, original_analysis)
     except Exception as e:
         return DyslexiaPipelineResult(
-            original_text, original_analysis, None, original_text, original_analysis,
+            original_text, original_analysis, None, original_text, None, original_analysis,
             list(original_analysis.difficult_words), 0, False, f"Initial LLM Error: {str(e)}"
         )
         
@@ -91,11 +102,29 @@ def run_dyslexia_pipeline(text: str, processor: LLMProcessor) -> DyslexiaPipelin
 
     difficult_terms = list(current_analysis.difficult_words)
     
+    # 3. Structure the final simplified text for Dyslexia
+    structured_data = None
+    try:
+        structured_dict = processor.structure_text(current_simplified_text)
+        structured_data = StructuredText(
+            title=structured_dict.get("title", ""),
+            main_idea=structured_dict.get("main_idea", ""),
+            sections=structured_dict.get("sections", []),
+            key_points=structured_dict.get("key_points", []),
+            steps=structured_dict.get("steps", []),
+            definitions=structured_dict.get("definitions", {}),
+            examples=structured_dict.get("examples", [])
+        )
+    except Exception as e:
+        # If structuring fails, just keep structured_text as None
+        pass
+    
     return DyslexiaPipelineResult(
         original_text=original_text,
         original_analysis=original_analysis,
         summary=summary_text,
         simplified_text=current_simplified_text,
+        structured_text=structured_data,
         final_analysis=current_analysis,
         difficult_terms=difficult_terms,
         refinement_count=refinement_count,

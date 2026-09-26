@@ -11,6 +11,18 @@ class UserProfile(Enum):
     DYSLEXIA = "dyslexia"
 
 @dataclass
+class DyslexiaReadingMode:
+    font_family: str = "OpenDyslexic, Comic Sans MS, Arial"
+    font_size: str = "18px"
+    letter_spacing: str = "0.12em"
+    word_spacing: str = "0.4em"
+    line_spacing: str = "1.5"
+    paragraph_spacing: str = "2.0em"
+    line_focus_enabled: bool = False
+    overlay_color: str = "#FAFAFA"
+    reduce_visual_clutter: bool = True
+
+@dataclass
 class AccessibilityRepresentation:
     """
     A structured container detailing what content to present to a specific user profile.
@@ -91,5 +103,10 @@ def get_accessibility_representation(
         rep.metadata["presentation_mode"] = "simplified_reading"
         rep.metadata["final_readability_grade"] = pipeline.final_analysis.flesch_kincaid_grade
         rep.metadata["difficult_terms_to_highlight"] = pipeline.difficult_terms
+        
+        # New dyselxia features
+        rep.metadata["dyslexia_reading_mode"] = DyslexiaReadingMode().__dict__
+        if pipeline.structured_text:
+            rep.metadata["structured_text"] = pipeline.structured_text.__dict__
 
     return rep

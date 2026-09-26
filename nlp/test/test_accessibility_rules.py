@@ -33,6 +33,7 @@ class TestAccessibilityRules(unittest.TestCase):
             original_analysis=original_analysis,
             summary="Mock Summary",
             simplified_text=simplified_text,
+            structured_text=None,
             final_analysis=final_analysis,
             difficult_terms=["photosynthesis"],
             refinement_count=1,
